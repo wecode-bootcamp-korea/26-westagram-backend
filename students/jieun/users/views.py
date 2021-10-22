@@ -1,12 +1,12 @@
 import json
 
-from django.http    import JsonResponse, HttpResponse
+from django.http    import JsonResponse
 from django.views   import View
 
 from .models    import User
 from .utils     import validate_email, validate_password, validate_phone
 
-class UserView(View):
+class SignUpView(View):
     def post(self, request):
         data = json.loads(request.body)
 
