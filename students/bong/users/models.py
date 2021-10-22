@@ -3,11 +3,11 @@ from django.db import DatabaseError
 from django.db.models.deletion import CASCADE
 
 class User(models.Model):
-    user_name = models.CharField(max_length=45)
-    user_email = models.EmailField(max_length=200, unique=True)
-    user_password = models.CharField(max_length=200)
-    user_phone_num = models.CharField(max_length=13)
-    reated_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=45)
+    email = models.EmailField(max_length=200, unique=True)
+    password = models.CharField(max_length=200)
+    phone_num = models.CharField(max_length=13)
+    related_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
