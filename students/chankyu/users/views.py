@@ -11,10 +11,8 @@ class SignupView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            print(data)
             
             if not data['email'] or not data['password']:
-                print("1"*10)
                 return HttpResponse({'MESSAGE' : 'NO_INPUT_DATA'}, status=400)
 
             email_validation = re.compile(
@@ -25,15 +23,12 @@ class SignupView(View):
                 )
 
             if (email_validation.match(data['email'])) is None:
-                print("2"*10)
                 return HttpResponse({"MESSAGE" : "INVALID_EMAIL"}, status=403)
 
             if (password_validation.match(data['password'])) is None:
-                print("3"*10)
                 return HttpResponse({"MESSAGE" : "INVALID_PASSWORD"}, status=403)
 
             if User.objects.filter(email=data['email']).exists():
-                print("4"*10)
                 return HttpResponse({"MESSAGE" : "ALREADY EXISTED"}, status=409)
 
             User.objects.create(
@@ -46,5 +41,4 @@ class SignupView(View):
             return HttpResponse({"MESSAGE" : "SUCCESS"}, status = 201)
 
         except:
-            print("5"*10)
             return HttpResponse({"MESSAGE" : "KEY_ERROR"}, status = 400)
