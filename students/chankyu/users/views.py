@@ -11,32 +11,27 @@ class SignupView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            
-            if not data['email'] or not data['password']:
-                return HttpResponse({'MESSAGE' : 'NO_INPUT_DATA'}, status=400)
+            name         = data['name']
+            email        = data['email']
+            password     = data['password']
+            phone_number = data['phone_number']
+            age          = data['age']
 
-            email_validation = re.compile(
-                "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$"
-                )
-            password_validation = re.compile(
-                "^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$"
-                )
-
-            if (email_validation.match(data['email'])) is None:
+            if not re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
                 return HttpResponse({"MESSAGE" : "INVALID_EMAIL"}, status=403)
 
-            if (password_validation.match(data['password'])) is None:
+            if not re.match('^(?=.*[A-Za-z])(?=.*\d)(?=.*[?!@#$%*&])[A-Za-z\d?!@#$%*&]{8,}$', password):
                 return HttpResponse({"MESSAGE" : "INVALID_PASSWORD"}, status=403)
 
-            if User.objects.filter(email=data['email']).exists():
+            if User.objects.filter(email=email).exists():
                 return HttpResponse({"MESSAGE" : "ALREADY EXISTED"}, status=409)
 
             User.objects.create(
-                name         = data['name'],
-                email        = data['email'],
-                password     = data['password'],
-                phone_number = data['phone_number'],
-                age          = data['age']
+                name         = name,
+                email        = email,
+                password     = password,
+                phone_number = phone_number,
+                age          = age
             )
             return HttpResponse({"MESSAGE" : "SUCCESS"}, status = 201)
 
