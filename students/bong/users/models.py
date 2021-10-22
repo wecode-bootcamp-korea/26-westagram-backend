@@ -6,7 +6,9 @@ class User(models.Model):
     user_name = models.CharField(max_length=45)
     user_email = models.EmailField(max_length=200, unique=True)
     user_password = models.CharField(max_length=200)
-    user_phone_num = models.CharField(max_length=11)
+    user_phone_num = models.CharField(max_length=13)
+    reated_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         db_table = 'users'
