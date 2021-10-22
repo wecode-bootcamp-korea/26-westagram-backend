@@ -1,6 +1,6 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/pycharm,python,visualstudiocode,vim,macos,linux,zsh
-# Edit at https://www.toptal.com/developers/gitignore?templates=pycharm,python,visualstudiocode,vim,macos,linux,zsh
+# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudiocode,macos,linux,vim,zsh
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,visualstudiocode,macos,linux,vim,zsh
 
 ### Linux ###
 *~
@@ -357,4 +357,7 @@ zsdoc/data
 /tests/_output/*
 !/tests/_output/.gitkeep
 
-# End of https://www.toptal.com/developers/gitignore/api/pycharm,python,visualstudiocode,vim,macos,linux,zsh
+# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudiocode,macos,linux,vim,zsh
+
+# 가장 하단 my_settings.py 추가하기
+my_settings.py
