@@ -26,9 +26,8 @@ class SignUpView(View):
             if not validate_phone(phone_number):
                 return JsonResponse({"message": "VALIDATION_ERROR : PHONE NUMBER"}, status=400)
 
-            found = User.objects.filter(email=email).exists()
-            if found:
-                return JsonResponse({"message": "DUPLICATE_EMAIL_ERROR"}, status=400)
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({"message": "DUPLICATE_EMAIL_ERROR"}, status=409)
 
             User.objects.create(
                 name         = name,
