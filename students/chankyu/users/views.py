@@ -52,7 +52,7 @@ class SigninView(View):
             if not User.objects.filter(email = email).exists():
                 return HttpResponse({"MESSAGE" : "INVALID_EMAIL"}, status = 401)
             
-            if not User.objects.filter(password = password).exists():
+            if password != User.objects.get(email = email).password:
                 return HttpResponse({"MESSAGE" : "INVALID_PASSWORD"}, status = 401)
 
             return HttpResponse({"MESSAGE": "SUCCESS"}, status = 200)
