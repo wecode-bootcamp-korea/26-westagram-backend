@@ -1,10 +1,11 @@
-import json, re, bcrypt
+import json, re, bcrypt, jwt
 
 from django.shortcuts import render
 from django.http.response import HttpResponse, JsonResponse
 from django.views import View
 
 from users.models import User
+from my_settings import SECRET_KEY, ALGORITHM
 
 # Create your views here.
 class SignupView(View):
@@ -43,15 +44,20 @@ class SignupView(View):
 class SigninView(View):
     def post(self, request):
         try:
-            data = json.loads(request.body)
+            data     = json.loads(request.body)
 
             email    = data['email']
             password = data['password']
 
-            if not User.objects.filter(email = email, password = password).exists():
-                return HttpResponse({"MESSAGE" : "INVALID_USER"}, status = 401)
+            user     = User.objects.get(email = email)
 
-            return HttpResponse({"MESSAGE": "SUCCESS"}, status = 200)
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                jwt_token = jwt.encode({'id':user.id}, SECRET_KEY, algorithm = ALGORITHM)
+                return HttpResponse({'ACCESS_TOKEN' : jwt_token},{'MESSAGE':'SUCCESS'}, status = 200)
+            else:
+                return HttpResponse({'MESSAGE':'WRONG_PASSWORD'}, status = 401)
 
         except KeyError:
             return HttpResponse({"MESSAGE" : "KEY_ERROR"}, status = 400)
+        except User.DoesNotExist:
+            return HttpResponse({"MESSAGE":"NOT_EXISTED_USER"}, status = 401)
