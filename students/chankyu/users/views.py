@@ -51,5 +51,5 @@ class SigninView(View):
 
             return HttpResponse({"MESSAGE": "SUCCESS"}, status = 200)
 
-        except:
+        except KeyError:
             return HttpResponse({"MESSAGE" : "KEY_ERROR"}, status = 400)
