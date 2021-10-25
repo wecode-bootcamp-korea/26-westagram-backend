@@ -16,9 +16,6 @@ class SignUpView(View):
             password       = data["password"]
             phone_number   = data["phone_number"]
             age            = data["age"]
- 
-            if not (password and email):
-                return JsonResponse({'message' : 'NO_VALUE'}, status=400)
 
             if not re.match('^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
                 return JsonResponse({'message' : 'EMAIL_VALIDATION_ERROR'}, status=400)
@@ -48,9 +45,6 @@ class SignInView(View):
             data         = json.loads(request.body)
             email        = data["email"]
             password     = data["password"]
-
-            if not (password and email):
-                return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
 
             if not User.objects.filter(password=password, email=email):
                 return JsonResponse({'message' : 'INVALID_USER'}, status=401)
