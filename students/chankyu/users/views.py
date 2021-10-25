@@ -46,14 +46,11 @@ class SigninView(View):
             email = data['email']
             password = data['password']
 
-            if email == "" or password =="":
+            if not (email and password):
                 return HttpResponse({"MESSAGE" : "NO_INPUT_DATA"}, status = 400)
             
-            if not User.objects.filter(email = email).exists():
-                return HttpResponse({"MESSAGE" : "INVALID_EMAIL"}, status = 401)
-            
-            if password != User.objects.get(email = email).password:
-                return HttpResponse({"MESSAGE" : "INVALID_PASSWORD"}, status = 401)
+            if not User.objects.filter(email = email, password = password).exists():
+                return HttpResponse({"MESSAGE" : "INVALID_USER"}, status = 401)
 
             return HttpResponse({"MESSAGE": "SUCCESS"}, status = 200)
 
