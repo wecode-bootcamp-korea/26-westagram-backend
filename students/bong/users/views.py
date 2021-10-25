@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import User
 
-class UserView(View):
+class SignupView(View):
     def post(self, request):
         data                = json.loads(request.body)
         name                = data["name"]
