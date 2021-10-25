@@ -16,8 +16,10 @@ class SignUpView(View):
 
             if not re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
                 return JsonResponse({"message": "INVALID_EMAIL"}, status=400)
+
             if not re.match('^(?=.*[A-Za-z])(?=.*\d)(?=.*[?!@#$%*&])[A-Za-z\d?!@#$%*&]{8,}$', password):
                 return JsonResponse({"message": "INVALID_PASSWORD"}, status=400)
+
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"message": "EMAIL_EXISTS"}, status=409)
 
@@ -30,5 +32,5 @@ class SignUpView(View):
                 sns_address = sns_address,
             )
             return JsonResponse({'MESSAGE':'CREATED'}, status=201)
-        except:
+        except KeyError:
             return JsonResponse({"MESSAGE" : "KEY_ERROR"}, status = 400) 
