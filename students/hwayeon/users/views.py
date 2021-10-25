@@ -8,13 +8,13 @@ from .models import User
 
 class SignupView(View):
     def post(self, request):
-        data = json.loads(request.body)
-        username = data['name']
-        email = data['email']
-        password = data['password']
+        data         = json.loads(request.body)
+        username     = data['name']
+        email        = data['email']
+        password     = data['password']
         phone_number = data['phone']
 
-        if not (email and password):
+        if not (username and email and password):
             return JsonResponse({"message": "Key_Error"}, status=400)
 
         if not re.match('^[\w+-]+@[\w]+\.[\w.]+$', email):
@@ -27,9 +27,9 @@ class SignupView(View):
             return JsonResponse({"message": "Email_Exist_Error"}, status=400)
 
         User.objects.create(
-            username = username,
-            email = email,
-            password = password,
+            username     = username,
+            email        = email,
+            password     = password,
             phone_number = phone_number
         )
 
