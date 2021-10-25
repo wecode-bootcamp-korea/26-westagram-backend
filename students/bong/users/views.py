@@ -37,3 +37,22 @@ class SignupView(View):
         
         return JsonResponse({"message" : "SUCCESS"}, status=201)
 
+class LoginView(View):
+    def post(self, request):
+        data                = json.loads(request.body)
+        email               = data["email"]
+        password            = data["password"]
+        if not (email or password):
+            return JsonResponse({"messgae" : "KEY_ERROR"}, status=400)
+
+        if not User.objects.filter(email=email).exists():
+            return JsonResponse({"message" : "INVALID_USER"}, status=401)
+            
+        if User.objects.filter(email=email).exists():
+            if password != User.objects.get(email=email).password:
+                return JsonResponse({"message" : "INVALID_USER"}, status=401)
+
+        
+        return JsonResponse({"message" : "SUCCESS"}, status=200)
+
+
