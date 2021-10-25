@@ -47,13 +47,9 @@ class SignInView(View):
         try:
             email = data["email"]
             password = data["password"]
-
-            if not Account.objects.filter(email=email).exists():
+            rquest_user = Account.objects.filter(email=email)
+            if not rquest_user.exists() or rquest_user[0].password != password:
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
-
-            if Account.objects.get(email=email).password != password:
-                return JsonResponse({"message": "INVALID_USER"}, status=401)
-
             return JsonResponse({"message": "SUCCESS"}, status=200)
 
         except KeyError:
