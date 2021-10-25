@@ -15,17 +15,18 @@ class LoginView(View):
         try:
             email    = data['email']
             password = data['password']
+            user     = User.objects.get(email=email, password=password)
 
-            user = User.objects.get(email=email, password=password)
-            
-            # user check
-            if not user:
-                return JsonResponse({"message": "INVALID_USER"}, status=401)
-            
+            # TODO: password check, token check
+                        
             return JsonResponse({"message": "SUCCESS"}, status=200)
-            
+
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
+
+        except User.DoesNotExist:
+            return JsonResponse({"message": "INVALID_USER"}, status=401)
+
 
 class SignUpView(View):
     def post(self, request):
