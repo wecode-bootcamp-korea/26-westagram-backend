@@ -15,15 +15,17 @@ class LoginView(View):
         try:
             email    = data['email']
             password = data['password']
-            user     = User.objects.get(email=email, password=password)
-
-            # TODO: password check, token check
-                        
+          
+            user = User.objects.get(email=email)
+            
+            is_valid_password = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
+            if not is_valid_password:
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
+        
             return JsonResponse({"message": "SUCCESS"}, status=200)
 
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
-
         except User.DoesNotExist:
             return JsonResponse({"message": "INVALID_USER"}, status=401)
 
@@ -51,10 +53,13 @@ class SignUpView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"message": "DUPLICATE_EMAIL_ERROR"}, status=409)
 
+            salt      = bcrypt.gensalt()
+            hashed_pw = bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+
             User.objects.create(
                 name         = name,
                 email        = email,
-                password     = password,
+                password     = hashed_pw,
                 phone_number = phone_number,
                 url          = url,
             )
