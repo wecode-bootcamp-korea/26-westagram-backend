@@ -1,4 +1,5 @@
 import json
+import bcrypt
 from django.http import JsonResponse
 from django.views import View
 from .models import Account
@@ -28,10 +29,11 @@ class SignUpView(View):
             if Account.objects.filter(email=email).exists():
                 return JsonResponse({"message": "USER_ALREADY_EXISTS"}, status=409)
 
+            hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
             Account.objects.create(
                 username=username,
                 email=email,
-                password=password,
+                password=hashed_password.decode("utf-8"),
                 phone_number=phone_number,
                 date_of_birth=date_of_birth,
             )
