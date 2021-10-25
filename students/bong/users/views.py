@@ -4,6 +4,7 @@ import re
 
 from django.views import View
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 
 from .models import User
 
@@ -32,7 +33,6 @@ class UserView(View):
             email=data["email"],
             password=data["password"],
             phone_num=data["phone_num"],
-     
             )
         
         return JsonResponse({"message" : "SUCCESS"}, status=201)
