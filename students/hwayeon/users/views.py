@@ -1,4 +1,3 @@
-# Create your views here.
 import json
 import re
 
@@ -7,25 +6,21 @@ from django.views import View
 
 from .models import User
 
-email_Validation = re.compile('^[\w+-]+@[\w]+\.[\w.]+$')
-password_Validation = re.compile('^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*-+_=?]).{8,}$')
-
 class SignupView(View):
     def post(self, request):
         data = json.loads(request.body)
-
         username = data['name']
         email = data['email']
         password = data['password']
         phone_number = data['phone']
 
-        if username == '' or password == '' :
+        if not (username and password):
             return JsonResponse({"message": "Key_Error"}, status=400)
 
-        if not email_Validation.match(email):
-            return JsonResponse({"message": "Email_Validation_Error"}, status=400)
+        if not re.match('^[\w+-]+@[\w]+\.[\w.]+$', email):
+            return JsonResponse({"message": "Email format is not valid"}, status=400)
 
-        if not password_Validation.match(password):
+        if not re.match('^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*-+_=?]).{8,}$', password):
             return JsonResponse({"message": "Password_Validation_Error"}, status=400)
 
         if User.objects.filter(email = data['email']).exists():
