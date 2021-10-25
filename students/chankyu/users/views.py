@@ -43,12 +43,9 @@ class SigninView(View):
         try:
             data = json.loads(request.body)
 
-            email = data['email']
+            email    = data['email']
             password = data['password']
 
-            if not (email and password):
-                return HttpResponse({"MESSAGE" : "NO_INPUT_DATA"}, status = 400)
-            
             if not User.objects.filter(email = email, password = password).exists():
                 return HttpResponse({"MESSAGE" : "INVALID_USER"}, status = 401)
 
