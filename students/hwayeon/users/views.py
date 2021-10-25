@@ -14,7 +14,7 @@ class SignupView(View):
         password = data['password']
         phone_number = data['phone']
 
-        if not (username and password):
+        if not (email and password):
             return JsonResponse({"message": "Key_Error"}, status=400)
 
         if not re.match('^[\w+-]+@[\w]+\.[\w.]+$', email):
