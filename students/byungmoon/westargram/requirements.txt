@@ -1,0 +1,9 @@
+touch requirements.txt
+vi requirements.txt
+
+Django==3.2.4
+django-cors-headers==3.7.0
+mysqlclient==2.0.3
+
+# m1의 경우 아래 패키지도 추가해주세요.
+PyMySQL==1.0.2
