@@ -9,11 +9,11 @@ from .models import User
 
 class UserlistView(View):
     def post(self, request):
-        data= json.loads(request.body)
-        REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
+        data            = json.loads(request.body)
+        REGEX_EMAIL     = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        REGEX_PASSWORD  = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
 
-        if data["email"] == "" or data["password"] == "":
+        if not (data.get("password") and data.get("email")):
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
             
         if not re.match(REGEX_EMAIL, data["email"]):
