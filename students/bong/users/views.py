@@ -30,10 +30,8 @@ class SignupView(View):
             return JsonResponse({"message" : "DUPLICATION_ERROR"}, status=400)
 
         User.objects.create(
-            name        = data.get("name"), 
-            email       = data.get("email"),
-            password    = (bcrypt.hashpw(data.get("password").encode('utf-8'), bcrypt.gensalt())).decode('utf-8'),
-            phone_num   = data.get("phone_num"),
+            name, email, password, phone_num,
+            hashed_password  = (bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())).decode('utf-8'),
             )
         
         return JsonResponse({"message" : "SUCCESS"}, status=201)
@@ -44,12 +42,13 @@ class LoginView(View):
         email       = data.get("email")
         password    = data.get("password")
 
-        if not (email or password):
+        if not (email and password):
             return JsonResponse({"messgae" : "KEY_ERROR"}, status=400)
 
-        if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-            if bcrypt.checkpw(data.get("password").encode('utf-8'), user.password.encode('utf-8')):
-                return JsonResponse({"message" : "SUCCESS"}, status=200)
+        if not User.objects.filter(email=email, password=password):
+            return JsonResponse({"message" : "INVALID_USER"}, status=401)
+            
+        return JsonResponse({"message" : "SUCCESS"}, status=200)
 
-        return JsonResponse({"message" : "INVALID_USER"}, status=401)
+        
+
