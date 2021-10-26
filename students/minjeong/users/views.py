@@ -46,11 +46,7 @@ class LoginView(View):
             email         = data['email']
             password      = data['password']
 
-            # 계정을 잘못 입력한 경우 -> {'message' : 'INVALID_USER'}, status code 401
-            if not User.objects.filter(email=email).exists():
-                return JsonResponse({'message' : 'INVALID_USER'}, status = 401)
-            # 비밀번호를 잘못 입력한 경우 -> {'message' : 'INVALID_USER'}, status code 401
-            if not User.objects.filter(password=password).exists():
+            if not User.objects.filter(email=email, password=password).exists():
                 return JsonResponse({'message' : 'INVALID_USER'}, status = 401)
             
             User.objects.get(
@@ -58,8 +54,7 @@ class LoginView(View):
                 password = password
             )
 
-            # 로그인 성공
             return JsonResponse({'message' : 'SUCCESS'}, status = 200)
-            # 계정이나 패스워드 키가 전달되지 않았을 경우 -> {'message' : 'KEY_ERROR'}, status code 400
+
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status = 400)
