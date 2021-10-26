@@ -1,11 +1,9 @@
 import json
-from os import name
 import re
 import bcrypt
 
 from django.views import View
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
 
 from .models import User
 
