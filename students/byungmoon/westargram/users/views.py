@@ -1,17 +1,18 @@
-from django.shortcuts import render
+import json, re
+
 from django.http      import JsonResponse
 from django.views     import View
+
 from users.models     import User
-import json, re
-# Create your views here.
+
 class SignUpView(View):
     def post(self, request):
         try:
-            data = json.loads(request.body)
-            name = data['name']
-            email = data['email']
-            password = data['password']
-            contact = data['contact']
+            data               = json.loads(request.body)
+            name               = data['name']
+            email              = data['email']
+            password           = data['password']
+            contact            = data['contact']
             other_personal_inf = data['other_personal_inf']
             
             if not re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
@@ -24,10 +25,10 @@ class SignUpView(View):
                 return JsonResponse({"message": "EMAIL_EXISTS"}, status=400)
 
             User.objects.create(
-                name = name,
-                email = email,
-                password = password,
-                contact = contact,
+                name               = name,
+                email              = email,
+                password           = password,
+                contact            = contact,
                 other_personal_inf = other_personal_inf
             )
             return JsonResponse({"MESSAGE" : "SUCCESS"}, status = 201)
