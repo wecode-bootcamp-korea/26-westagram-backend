@@ -31,7 +31,7 @@ class SignUpView(View):
                 contact            = contact,
                 other_personal_inf = other_personal_inf
             )
-            return JsonResponse({"MESSAGE" : "SUCCESS"}, status = 201)
+            return JsonResponse({"message" : "SUCCESS"}, status = 201)
 
         except KeyError:
                 return JsonResponse({"error_message" : "KEY_ERROR"}, status = 400)
@@ -49,4 +49,4 @@ class SignInView(View):
             return JsonResponse({"message": "SUCCESS"}, status=200)
         
         except KeyError:
-            return JsonResponse({"message": "KEY_ERROR"}, status=400)
+            return JsonResponse({"error_message": "KEY_ERROR"}, status=400)
