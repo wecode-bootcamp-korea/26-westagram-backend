@@ -1,11 +1,9 @@
-import json
-import re
+import json, re
+
 from django.http import JsonResponse, request
 from django.views import View
-from django.shortcuts import render
-from .models import User
 
-# Create your views here.
+from .models import User
 
 class UserlistView(View):
     def post(self, request):
@@ -34,5 +32,15 @@ class UserlistView(View):
         )
 
         return JsonResponse({"message" : "SUCCESS"}, status = 201)
-        
-        
+
+class Login(View):
+    def get(self, request):
+        data = json.loads(request.body)
+
+        if not (data.get("password") and data.get("email")):
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+
+        if not User.objects.filter(email=data["email"], password=data["password"]).exists():
+            return JsonResponse({"message" : "INVALID_USER"}, status=401) 
+
+        return JsonResponse({"message" : "SUCCESS"}, status = 200)        
