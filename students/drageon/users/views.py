@@ -1,5 +1,6 @@
 import json
 import re
+import bcrypt
 
 from django.http import JsonResponse
 from django.views import View
@@ -18,6 +19,8 @@ class UserListView(View):
             contact       = data["contact"]
             date_of_birth = data["date_of_birth"]
             hobby         = data["hobby"]
+            salt          = bcrypt.gensalt()
+            hashed_password = bcrypt.hashpw( password.encode('utf-8'), salt )
             
             if not re.match('^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email) :
                 return JsonResponse({"message": "E-mail is not valued"}, status = 400)
@@ -31,7 +34,7 @@ class UserListView(View):
             User.objects.create(
                 name          = name,
                 email         = email,
-                password      = password,
+                password      = hashed_password,
                 contact       = contact,
                 date_of_birth = date_of_birth,
                 hobby         = hobby
