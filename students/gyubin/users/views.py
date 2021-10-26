@@ -4,6 +4,7 @@ from django.http     import JsonResponse
 from django.views    import View
 
 from users.models import User
+from westagram.settings import SECRET_KEY
 
 class SignupView(View):
     def post(self, request):
@@ -44,10 +45,12 @@ class LoginView(View):
             email    = data['email']
             password = data['password']
 
-            if not User.objects.filter(email=email, password=password).exists():
-                return JsonResponse({"message": "INVALID_USER"}, status = 401)
+            if User.objects.filter(email=email).exists():
+                if bcrypt.checkpw(password.encode('utf-8'), User.objects.get(email=email).password.encode('utf-8')):
+                    token = jwt.encode({'email': email}, SECRET_KEY, algorithm = 'HS256')
+                    return JsonResponse({'MESSAGE' : 'SUCCESS', 'TOKEN' : token}, status=200)
 
-            return JsonResponse({'MESSAGE' : 'SUCCESS'}, status=200)
+            return JsonResponse({"message": "INVALID_USER"}, status = 401)
 
         except KeyError:
             return  JsonResponse({"error_message" : "Key_Error"}, status = 400)
