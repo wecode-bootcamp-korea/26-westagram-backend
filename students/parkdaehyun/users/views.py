@@ -26,11 +26,11 @@ class UserlistView(View):
             return JsonResponse({"message" : "동일한 이메일이 존재합니다."}, status=400)
         
         User.objects.create(
-        name                 = data["name"],
-        email                = data["email"],
-        password             = data["password"],
-        telephone            = data["telephone"],
-        personal_information = data["personal_information"],
+            name                 = data["name"],
+            email                = data["email"],
+            password             = data["password"],
+            telephone            = data["telephone"],
+            personal_information = data["personal_information"],
         )
 
         return JsonResponse({"message" : "SUCCESS"}, status = 201)
