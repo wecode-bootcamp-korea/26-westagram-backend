@@ -364,3 +364,6 @@ my_settings.py
 
 ## .vscode
 .vscode/
+
+## max_line problem
+pyproject.toml

@@ -1,9 +1,9 @@
-import json
-import bcrypt
+import json, bcrypt, jwt
 from django.http import JsonResponse
 from django.views import View
 from .models import Account
 from .validate import validate_email, validate_password
+from my_settings import SECRET_KEY, ALGORITHM
 
 # Create your views here.
 class SignUpView(View):
@@ -49,9 +49,14 @@ class SignInView(View):
         try:
             email = data["email"]
             password = data["password"]
-            if not Account.objects.filter(email=email, password=password).exists():
-                return JsonResponse({"message": "INVALID_USER"}, status=401)
-            return JsonResponse({"message": "SUCCESS"}, status=200)
+            user = Account.objects.get(email=email)
 
+            if bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
+                access_token = jwt.encode({"user_id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
+                return JsonResponse({"access_token": access_token}, status=200)
+            else:
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
+        except Account.DoesNotExist:
+            return JsonResponse({"message": "Does_Not_Exist"}, status=404)
