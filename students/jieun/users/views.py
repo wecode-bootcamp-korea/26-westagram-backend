@@ -2,10 +2,10 @@ import json, bcrypt, jwt
 
 from django.http    import JsonResponse
 from django.views   import View
+from django.conf    import settings
 
 from users.models   import User
 from users.utils    import validate_email, validate_password, validate_phone
-from django.conf    import settings
 
 class LoginView(View):
     def post(self, request):
