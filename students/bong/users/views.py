@@ -29,10 +29,10 @@ class SignupView(View):
             return JsonResponse({"message" : "DUPLICATION_ERROR"}, status=400)
 
         User.objects.create(
-            name=data["name"], 
-            email=data["email"],
-            password=data["password"],
-            phone_num=data["phone_num"],
+            name        = data["name"], 
+            email       = data["email"],
+            password    = data["password"],
+            phone_num   = data["phone_num"],
             )
         
         return JsonResponse({"message" : "SUCCESS"}, status=201)
