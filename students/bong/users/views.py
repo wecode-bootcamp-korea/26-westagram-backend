@@ -1,10 +1,9 @@
 import json
-from os import name
 import re
+import bcrypt
 
 from django.views import View
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
 
 from .models import User
 
@@ -29,10 +28,8 @@ class SignupView(View):
             return JsonResponse({"message" : "DUPLICATION_ERROR"}, status=400)
 
         User.objects.create(
-            name        = data["name"], 
-            email       = data["email"],
-            password    = data["password"],
-            phone_num   = data["phone_num"],
+            name, email, password, phone_num,
+            hashed_password  = (bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())).decode('utf-8'),
             )
         
         return JsonResponse({"message" : "SUCCESS"}, status=201)
@@ -43,12 +40,13 @@ class LoginView(View):
         email       = data.get("email")
         password    = data.get("password")
 
-        if not (email or password):
+        if not (email and password):
             return JsonResponse({"messgae" : "KEY_ERROR"}, status=400)
 
         if not User.objects.filter(email=email, password=password):
             return JsonResponse({"message" : "INVALID_USER"}, status=401)
-
+            
         return JsonResponse({"message" : "SUCCESS"}, status=200)
 
+        
 
