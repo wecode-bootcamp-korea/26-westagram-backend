@@ -25,10 +25,12 @@ class SignupView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({"message": "EMAIL_EXISTS"}, status=409)
 
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
             User.objects.create(
                 name     = name,
                 email    = email,
-                password = (bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())).decode('utf-8'),
+                password = hashed_password.decode('utf-8'),
                 contact  = contact,
             )
 
@@ -42,13 +44,12 @@ class LoginView(View):
         data = json.loads(request.body)
 
         try:
-            email    = data['email']
+            email    = User.objects.get(email=data['email'])
             password = data['password']
 
-            if User.objects.filter(email=email).exists():
-                if bcrypt.checkpw(password.encode('utf-8'), User.objects.get(email=email).password.encode('utf-8')):
-                    token = jwt.encode({'email': email}, SECRET_KEY, algorithm = 'HS256')
-                    return JsonResponse({'MESSAGE' : 'SUCCESS', 'TOKEN' : token}, status=200)
+            if bcrypt.checkpw(password.encode('utf-8'), email.password.encode('utf-8')):
+                token = jwt.encode({'id': email.id}, SECRET_KEY, algorithm = 'HS256')
+                return JsonResponse({'MESSAGE' : 'SUCCESS', 'TOKEN' : token}, status=200)
 
             return JsonResponse({"message": "INVALID_USER"}, status = 401)
 
