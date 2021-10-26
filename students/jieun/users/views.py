@@ -23,7 +23,7 @@ class LoginView(View):
             token = jwt.encode(
                 {
                     'user_id': user.id, 
-                    'exp'    : settings.JWT['EXP_IN_SEC']
+                    # 'exp'    : settings.JWT['EXP_IN_SEC']
                 }
                 , settings.JWT['SECRET']
                 , algorithm = settings.JWT['ALGORITHM']
