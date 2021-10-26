@@ -3,7 +3,7 @@ import json, re
 from django.http      import JsonResponse
 from django.views     import View
 
-from users.models     import User
+from .models     import User
 
 class SignUpView(View):
     def post(self, request):
@@ -41,7 +41,7 @@ class SignInView(View):
         try:
             data     = json.loads(request.body)
             email    = data['email']
-            password = [data'password']
+            password = data['password']
 
             if not User.objects.filter(email=email, password=password).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
