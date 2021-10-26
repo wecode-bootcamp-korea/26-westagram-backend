@@ -19,8 +19,7 @@ class UserListView(View):
             contact       = data["contact"]
             date_of_birth = data["date_of_birth"]
             hobby         = data["hobby"]
-            salt          = bcrypt.gensalt()
-            hashed_password = bcrypt.hashpw( password.encode('utf-8'), salt )
+            hashed_password = bcrypt.hashpw( password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             
             if not re.match('^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email) :
                 return JsonResponse({"message": "E-mail is not valued"}, status = 400)
