@@ -10,11 +10,11 @@ from .models import User
 
 class SignupView(View):
     def post(self, request):
-        data                = json.loads(request.body)
-        name                = data["name"]
-        email               = data["email"]
-        password            = data["password"]
-        phone_num           = data["phone_num"]
+        data        = json.loads(request.body)
+        name        = data.get("name")
+        email       = data.get("email")
+        password    = data.get("password")
+        phone_num   = data.get("phone_num")
 
         if not (email and password):
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
@@ -29,11 +29,26 @@ class SignupView(View):
             return JsonResponse({"message" : "DUPLICATION_ERROR"}, status=400)
 
         User.objects.create(
-            name=data["name"], 
-            email=data["email"],
-            password=data["password"],
-            phone_num=data["phone_num"],
+            name        = data["name"], 
+            email       = data["email"],
+            password    = data["password"],
+            phone_num   = data["phone_num"],
             )
         
         return JsonResponse({"message" : "SUCCESS"}, status=201)
+
+class LoginView(View):
+    def post(self, request):
+        data        = json.loads(request.body)
+        email       = data.get("email")
+        password    = data.get("password")
+
+        if not (email or password):
+            return JsonResponse({"messgae" : "KEY_ERROR"}, status=400)
+
+        if not User.objects.filter(email=email, password=password):
+            return JsonResponse({"message" : "INVALID_USER"}, status=401)
+
+        return JsonResponse({"message" : "SUCCESS"}, status=200)
+
 
