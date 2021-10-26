@@ -39,8 +39,8 @@ class SignUpView(View):
 class SignInView(View):
     def post(self,request):
         try:
-            data = json.loads(request.body)
-            email = data['email']
+            data     = json.loads(request.body)
+            email    = data['email']
             password = [data'password']
 
             if not User.objects.filter(email=email, password=password).exists():
