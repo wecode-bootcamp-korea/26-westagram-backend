@@ -5,7 +5,7 @@ from django.views   import View
 
 from users.models   import User
 from users.utils    import validate_email, validate_password, validate_phone
-from my_settings    import JWT
+from django.conf    import settings
 
 class LoginView(View):
     def post(self, request):
@@ -23,10 +23,10 @@ class LoginView(View):
             token = jwt.encode(
                 {
                     'user_id': user.id, 
-                    'exp'    : JWT['EXP_IN_SEC']
+                    'exp'    : settings.JWT['EXP_IN_SEC']
                 }
-                , JWT['SECRET']
-                , algorithm = JWT['ALGORITHM']
+                , settings.JWT['SECRET']
+                , algorithm = settings.JWT['ALGORITHM']
             )
             return JsonResponse({"message": "SUCCESS", "token" : token}, status=200)
 
