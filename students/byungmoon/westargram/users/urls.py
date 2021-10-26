@@ -15,8 +15,8 @@ Including another URLconf
 """
 
 from django.urls import path
-from django.urls import path, include
+from users.views import SignUpView
 
 urlpatterns = [
-    path('users', include('users.urls')),
-]
+	path('/signup', SignUpView.as_view()), 
+] 
