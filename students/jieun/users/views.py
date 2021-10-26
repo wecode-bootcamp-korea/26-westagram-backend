@@ -1,12 +1,11 @@
-import json
-import bcrypt
-import jwt
+import json, bcrypt, jwt
 
 from django.http    import JsonResponse
 from django.views   import View
 
-from .models    import User
-from .utils     import validate_email, validate_password, validate_phone
+from users.models   import User
+from users.utils    import validate_email, validate_password, validate_phone
+from django.conf    import settings
 
 class LoginView(View):
     def post(self, request):
@@ -15,14 +14,21 @@ class LoginView(View):
         try:
             email    = data['email']
             password = data['password']
-          
-            user = User.objects.get(email=email)
+            user     = User.objects.get(email=email)
             
             is_valid_password = bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8'))
             if not is_valid_password:
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
-        
-            return JsonResponse({"message": "SUCCESS"}, status=200)
+            
+            token = jwt.encode(
+                {
+                    'user_id': user.id, 
+                    'exp'    : settings.JWT['EXP_IN_SEC']
+                }
+                , settings.JWT['SECRET']
+                , algorithm = settings.JWT['ALGORITHM']
+            )
+            return JsonResponse({"message": "SUCCESS", "token" : token}, status=200)
 
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
