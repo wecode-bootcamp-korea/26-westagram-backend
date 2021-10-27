@@ -7,6 +7,7 @@ from .models     import User
 
 class SignUpView(View):
     def post(self, request):
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
         try:
             data               = json.loads(request.body)
             name               = data['name']
@@ -27,7 +28,7 @@ class SignUpView(View):
             User.objects.create(
                 name               = name,
                 email              = email,
-                password           = (bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())).decode('utf-8'),
+                password           = hashed_password,
                 contact            = contact,
                 other_personal_inf = other_personal_inf
             )
