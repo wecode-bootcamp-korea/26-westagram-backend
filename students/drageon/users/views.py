@@ -5,6 +5,7 @@ import jwt
 
 from django.http import JsonResponse
 from django.views import View
+from django.conf import settings
 
 from .models import User
 
@@ -53,15 +54,15 @@ class LogInView(View) :
         try : 
             email           = data["email"] 
             password        = data["password"]
-            hashed_Password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             user            = User.objects.get(email=email)
-            encoded_jwt     = jwt.encode({'user-id' : user.id}, 'secret', algorithm = 'HS256')
+            encoded_jwt     = jwt.encode({'user-id' : user.id}, settings.SECRET_KEY, settings.ALGORITHM)
 
-            if not User.objects.filter(email=email).exists() :
-                return JsonResponse({"message": "INVALID_USER"}, status = 401)
-
-            if bcrypt.checkpw(password.encode('utf-8'), hashed_Password.encode('utf-8')):
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')) : 
                 return JsonResponse({"message": "SUCCESS", "jwt": encoded_jwt}, status = 200)
+            else :
+                return JsonResponse({"message": "INVALID_USER"}, status = 400)
 
         except KeyError : 
             return JsonResponse({"message": "KEY_ERROR"}, status = 400)
+        except User.DoesNotExist :
+            return JsonResponse({"message" : "Unauthorized"}, status = 401)
