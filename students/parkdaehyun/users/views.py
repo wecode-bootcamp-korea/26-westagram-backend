@@ -34,7 +34,7 @@ class UserlistView(View):
         return JsonResponse({"message" : "SUCCESS"}, status = 201)
 
 class LoginView(View):
-    def get(self, request):
+    def post(self, request):
         data = json.loads(request.body)
 
         if not (data.get("password") and data.get("email")):
@@ -42,5 +42,5 @@ class LoginView(View):
 
         if not User.objects.filter(email=data["email"], password=data["password"]).exists():
             return JsonResponse({"message" : "INVALID_USER"}, status=401) 
-        
+
         return JsonResponse({"message" : "SUCCESS"}, status = 200)
