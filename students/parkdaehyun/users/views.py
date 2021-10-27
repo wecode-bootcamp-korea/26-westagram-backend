@@ -1,4 +1,5 @@
 import json, re
+import bcrypt
 
 from django.http import JsonResponse, request
 from django.views import View
@@ -22,11 +23,13 @@ class UserlistView(View):
 
         if User.objects.filter(email=data["email"]).exists():
             return JsonResponse({"message" : "동일한 이메일이 존재합니다."}, status=400)
+
+        hashed_password = (bcrypt.hashpw(data["password"].encode("utf-8")), bcrypt.genslat()).decode("utf-8")
         
         User.objects.create(
             name                 = data["name"],
             email                = data["email"],
-            password             = data["password"],
+            password             = hashed_password,
             telephone            = data["telephone"],
             personal_information = data["personal_information"],
         )
@@ -40,7 +43,10 @@ class LoginView(View):
         if not (data.get("password") and data.get("email")):
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-        if not User.objects.filter(email=data["email"], password=data["password"]).exists():
-            return JsonResponse({"message" : "INVALID_USER"}, status=401) 
-
-        return JsonResponse({"message" : "SUCCESS"}, status = 200)
+        if User.objects.filter(email=data["email"]).exists():
+            if bcrypt.checkpw(data["password"].encode("utf-8"), User.objects.get(email=data["email"]).password.encode("utf-8")):
+                return JsonResponse({"message" : "SUCCESS"}, status=200)
+            else:
+                return JsonResponse({"message" : "INVALID_USER"}, status=401) 
+        else:
+            return JsonResponse({"message" : "INVALID_USER"}, status=401)
