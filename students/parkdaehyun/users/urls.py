@@ -1,8 +1,8 @@
 from django.urls               import path
-from django.urls.resolvers     import URLPattern
-from django.views.generic.base import View
-from .views                    import UserlistView
+
+from .views                    import LoginView, UserlistView
 
 urlpatterns = [
-    path("user", UserlistView.as_view())
+    path("/user", UserlistView.as_view()),
+    path("/login", LoginView.as_view())
 ]
