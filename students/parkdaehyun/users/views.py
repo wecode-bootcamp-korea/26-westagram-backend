@@ -43,10 +43,7 @@ class LoginView(View):
         if not (data.get("password") and data.get("email")):
             return JsonResponse({"message" : "KEY_ERROR"}, status=400)
 
-        if User.objects.filter(email=data["email"]).exists():
-            if bcrypt.checkpw(data["password"].encode("utf-8"), User.objects.get(email=data["email"]).password.encode("utf-8")):
-                return JsonResponse({"message" : "SUCCESS"}, status=200)
-            else:
-                return JsonResponse({"message" : "INVALID_USER"}, status=401) 
-        else:
-            return JsonResponse({"message" : "INVALID_USER"}, status=401)
+        if not User.objects.filter(email=data["email"], password=data["password"]).exists():
+            return JsonResponse({"message" : "INVALID_USER"}, status=401) 
+
+        return JsonResponse({"message" : "SUCCESS"}, status = 200)
