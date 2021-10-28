@@ -1,4 +1,5 @@
 import json, re
+import bcrypt
 
 from django.http import JsonResponse, request
 from django.views import View
@@ -22,11 +23,13 @@ class UserlistView(View):
 
         if User.objects.filter(email=data["email"]).exists():
             return JsonResponse({"message" : "동일한 이메일이 존재합니다."}, status=400)
+
+        hashed_password = (bcrypt.hashpw(data["password"].encode("utf-8")), bcrypt.genslat()).decode("utf-8")
         
         User.objects.create(
             name                 = data["name"],
             email                = data["email"],
-            password             = data["password"],
+            password             = hashed_password,
             telephone            = data["telephone"],
             personal_information = data["personal_information"],
         )
