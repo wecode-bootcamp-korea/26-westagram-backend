@@ -2,6 +2,7 @@ import json, re
 import bcrypt
 import jwt
 
+from django.conf import settings
 from django.http import JsonResponse, request
 from django.views import View
 
@@ -39,16 +40,18 @@ class UserlistView(View):
 
 class LoginView(View):
     def post(self, request):
-        data = json.loads(request.body)
-        access_token= jwt.encode({'id' : User.objects.get(email=data["email"]).id}, 'secret', algorithm='HS256')
+        try:
+            data        = json.loads(request.body)
+            user        = User.objects.get(email=data["email"])
+            access_token= jwt.encode({'id' : user.id}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-        if not (data.get("password") and data.get("email")):
-            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+            if User.objects.filter(email=data["email"]).exists():
+                if not bcrypt.checkpw(data["password"].encode("utf-8"), user.password.encode("utf-8")):
+                    return JsonResponse({"message" : "INVALID_USER"}, status=401)
+                return JsonResponse({"token" : access_token}, status=200) 
 
-        if User.objects.filter(email=data["email"]).exists():
-            if bcrypt.checkpw(data["password"].encode("utf-8"), User.objects.get(email=data["email"]).password.encode("utf-8")):
-                return JsonResponse({"token" : access_token}, status=200)
-            else:
-                return JsonResponse({"message" : "INVALID_USER"}, status=401) 
-        else:
+        except User.DoesNotExist:
             return JsonResponse({"message" : "INVALID_USER"}, status=401)
+
+        except KeyError:
+            return JsonResponse({"message" : "KEY_ERROR"}, status=400)
