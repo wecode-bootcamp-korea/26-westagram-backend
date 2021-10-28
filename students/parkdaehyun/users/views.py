@@ -2,11 +2,11 @@ import json, re
 import bcrypt
 import jwt
 
-from django.conf import settings
-from django.http import JsonResponse, request
+from django.conf  import settings
+from django.http  import JsonResponse, request
 from django.views import View
 
-from .models import User
+from .models      import User
 
 class UserlistView(View):
     def post(self, request):
@@ -43,9 +43,9 @@ class LoginView(View):
         try:
             data        = json.loads(request.body)
             user        = User.objects.get(email=data["email"])
-            access_token= jwt.encode({'id' : user.id}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
             if User.objects.filter(email=data["email"]).exists():
+                access_token= jwt.encode({'id' : user.id}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
                 if not bcrypt.checkpw(data["password"].encode("utf-8"), user.password.encode("utf-8")):
                     return JsonResponse({"message" : "INVALID_USER"}, status=401)
                 return JsonResponse({"token" : access_token}, status=200) 
