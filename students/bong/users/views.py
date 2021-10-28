@@ -4,7 +4,7 @@ import bcrypt, jwt
 
 from django.views import View
 from django.http import HttpResponse, JsonResponse
-from django.conf.settings import ALGORITHM, SECRET_KEY
+from django.conf import settings
 
 from .models import User
 
@@ -51,7 +51,7 @@ class LoginView(View):
             user = User.objects.get(email=email)
 
             if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                token = jwt.encode({"email" : email}, SECRET_KEY, algorithm=ALGORITHM)
+                token = jwt.encode({"email" : email}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
                 return JsonResponse({"TOKEN" : token}, status=200)
                 
         except User.DoesNotExist:
