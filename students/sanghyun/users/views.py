@@ -1,7 +1,9 @@
+import json, re, bcrypt
+
 from django.http        import JsonResponse
 from django.views       import View
+
 from users.models       import User
-import json, re, bcrypt
 
 class SignUpView(View):
     def post(self, request):
