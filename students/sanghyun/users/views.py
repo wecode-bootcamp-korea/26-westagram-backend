@@ -49,14 +49,14 @@ class LogInView(View):
             password    = data['password']
             user_info   = User.objects.get(email=email)
 
-            if bcrypt.checkpw(password.encode("utf-8"), user_info.password.encode("utf-8")):
-                token = jwt.encode({'id': user_info.id}, SECRET_KEY, algorithm = ALGORITHM)
-                return JsonResponse({'MESSAGE' : 'TOKEN_GENERATE_SUCCESS', 'token' : token}, status = 200)
-
-            return JsonResponse({"MESSAGE": "CHECK_YOUR_ID/PASSWORD"}, status = 401)
+            if not bcrypt.checkpw(password.encode("utf-8"), user_info.password.encode("utf-8")):
+                return JsonResponse({"MESSAGE": "CHECK_YOUR_EMAIL/PASSWORD"}, status = 400)
+                
+            token = jwt.encode({'id': user_info.id}, SECRET_KEY, algorithm = ALGORITHM)
+            return JsonResponse({'MESSAGE' : 'LOGIN_SUCCESS', 'TOKEN' : token}, status = 200)
 
         except KeyError:
             return  JsonResponse({"MESSAGE" : "KEY_ERROR"}, status = 400)
 
         except User.DoesNotExist:
-            return JsonResponse({"MESSAGE":"USER_DOESN'T_EXISTS"}, status = 401) 
+            return JsonResponse({"MESSAGE": "CHECK_YOUR_EMAIL/PASSWORD"}, status = 401) 
