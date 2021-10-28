@@ -12,7 +12,6 @@ from .models import User
 class SignupView(View):
     def post(self, request):
         data        = json.loads(request.body)
-        print(data)
         name        = data["name"]
         email       = data["email"]
         password    = data["password"]
@@ -39,22 +38,24 @@ class SignupView(View):
             phone_num   = phone_num
             )
         
-        return JsonResponse({"message" : "SUCCESS"}, status=200)
+        return JsonResponse({"message" : "SUCCESS"}, status=201)
 
 class LoginView(View):
     def post(self, request):
-        data            = json.loads(request.body)
-        email           = data["email"]
-        password        = data["password"]
-        
         try:
+            data            = json.loads(request.body)
+            email           = data["email"]
+            password        = data["password"]
             user = User.objects.get(email=email)
 
-            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                token = jwt.encode({"email" : email}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-                return JsonResponse({"TOKEN" : token}, status=200)
+            if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                return JsonResponse({"MESSAGE" : "INVALID_USER"}, status=401)
+
+            access_token = jwt.encode({"id" : user.id}, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+            return JsonResponse({"MESSAGE" : "SUCCESS", "ACCESS_TOKEN" : access_token}, status=200)
                 
         except User.DoesNotExist:
             return JsonResponse({"message" : "USER_DOES_EXISTS"}, status=401) 
-        
-  
+
+        except KeyError:
+            return JsonResponse({"message" : "KEY_ERROR"}, status=401)               
