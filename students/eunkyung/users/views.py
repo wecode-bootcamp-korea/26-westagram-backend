@@ -1,4 +1,4 @@
-import json
+import json, bcrypt
 
 from django.http    import JsonResponse
 from django.views   import View
@@ -9,6 +9,7 @@ from .utils         import validate_email, vaildate_password
 class SignupView(View):
     def post(self, request):
         data = json.loads(request.body)
+        print(data)
         try : 
             name     = data['name']
             email    = data['email']
@@ -25,10 +26,12 @@ class SignupView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'MESSAGE':'ALREADY_EXISTS_EMAIL'}, status=409)
 
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
             User.objects.create(
                name     = name,
                email    = email,
-               password = password,
+               password = hashed_password,
                number   = number,
                nickname = nickname,
             )             
