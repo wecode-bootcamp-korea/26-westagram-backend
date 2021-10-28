@@ -11,11 +11,11 @@ class UserView(View):
 
         try:
             data = json.loads(request.body)
-            name          = "임기범"
+            name          = data['name']
             email         = data['email']
             password      = data['password']
-            phone_number  = "010-2222-2222"
-            personal_info = "ㅇㅇ"
+            phone_number  = data['phone_number']
+            personal_info = data['personal_info']
 
             if not re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
                 return JsonResponse({'message':'EMAIL_NOT_VALID'}, status=400)
